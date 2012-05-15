@@ -9,7 +9,7 @@ function TestClass() {
      * @param {number} value
      * @return {number} return value
      */
-    this.methodA = function(value) {
+    this.methodATakesANumber = function(value) {
         return value;
     }
 
@@ -18,7 +18,7 @@ function TestClass() {
      * @param {string} value
      * @return {string} return value
      */
-    this.methodB = function(value) {
+    this.methodBTakesAString = function(value) {
         return value;
     }
 }

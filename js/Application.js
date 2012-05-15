@@ -8,8 +8,8 @@ function Application() {
         var tst = new TestClass();
 
         // Type enforcement doesn't work from global scope!
-        tst.methodA(3);
-        tst.methodB("test");
+        tst.methodATakesANumber(3);
+        tst.methodBTakesAString("test");
 
         return "Spacebag is AWESOME";
     }
