@@ -1,0 +1,101 @@
+<project name="Asset ANT Build" default="init" basedir=".">
+	<description>
+		Build
+	</description>
+
+	<!-- global properties -->
+	<property name="build.dir" location="build"/>
+    <property name="prebuild.dir" location="prebuild"/>
+
+    <!-- Task Definitions -->
+	<taskdef name="jscomp"
+		classname="com.google.javascript.jscomp.ant.CompileTask"
+		classpath="/usr/share/closure/compiler.jar"/>
+
+    <taskdef name="jsdoctoolkit"
+             classname="uk.co.darrenhurley.ant.tasks.JsDocToolkit"
+             classpath="/usr/share/jsdoc/jsdoc_toolkit-2.4.0/jsdoc-toolkit/jsrun.jar;/usr/share/jsdoc/jsdoc-toolkit-ant-task-1.1.2.jar;"/>
+
+
+
+
+    <!-- Target Functions -->
+
+
+    <!-- init is our main function definition, it will clean, compile, and document -->
+	<target name="init">
+        <antcall target="clean" />
+        <antcall target="compile" />
+        <antcall target="document" />
+	</target>
+
+
+    <!-- clean will delete current directories and make new fresh ones -->
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+        <delete dir="${prebuild.dir}"/>
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${prebuild.dir}"/>
+	</target>
+
+
+    <!-- compile is our TWO-PASS compilation process -->
+	<target
+		name="compile"
+		description="Google Closure">
+		<jscomp
+			compilationLevel="advanced"
+			warning="verbose" 
+	        debug="true"
+			output="${prebuild.dir}/js/mycode.js">
+	        <sources refid="myapp"/>
+		</jscomp>
+
+        <!-- second pass, include jQuery -->
+        <jscomp
+            compilationLevel="whitespace"
+            warning="verbose"
+            debug="true"
+            output="${build.dir}/js/final.js">
+            <sources refid="prebuild"/>
+            <sources refid="libs"/>
+            <sources refid="main"/>
+        </jscomp>
+	</target>
+
+
+    <!-- Document is the process to use JSDocToolkit and create documentation -->
+    <target
+            name="document"
+            description="JSDoc">
+        <jsdoctoolkit
+                jsdochome="/usr/share/jsdoc/jsdoc_toolkit-2.4.0/jsdoc-toolkit/"
+                template="jsdoc"
+                outputdir="${build.dir}/docs"
+                inputdir="js" />
+    </target>
+
+
+    <!-- A File set of all JS files in my Application -->
+	<filelist dir="js" id="myapp">
+		<file name="TestClass.js" />
+        <file name="Application.js" />
+	</filelist>
+
+
+    <!-- A File set of the first pass build files -->
+    <filelist dir="${prebuild.dir}/js" id="prebuild">
+        <file name="mycode.js" />
+    </filelist>
+
+    <!-- A File set of the main file that initializes the application -->
+    <filelist dir="js" id="main">
+        <file name="Main.js" />
+    </filelist>
+
+    <!-- A File set of our external libraries -->
+    <filelist dir="libs" id="libs">
+        <file name="jquery.js" />
+    </filelist>
+	
+</project>
